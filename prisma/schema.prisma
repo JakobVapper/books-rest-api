@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model authors {
+  id           Int            @id @default(autoincrement())
+  first_name   String         @db.VarChar(45)
+  last_name    String         @db.VarChar(45)
+  book_authors book_authors[]
+}
+
+model book_authors {
+  id        Int     @id @default(autoincrement())
+  book_id   Int
+  author_id Int
+  authors   authors @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_yl21_Books_has_yl21_Authors_yl21_Authors1")
+  books     books   @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_yl21_Books_has_yl21_Authors_yl21_Books")
+
+  @@index([author_id], map: "fk_yl21_Books_has_yl21_Authors_yl21_Authors1_idx")
+  @@index([book_id], map: "fk_yl21_Books_has_yl21_Authors_yl21_Books_idx")
+}
+
+model books {
+  id           Int            @id @default(autoincrement())
+  title        String         @db.VarChar(255)
+  release_date Int            @db.Year
+  cover_path   String?        @db.VarChar(255)
+  language     String         @db.VarChar(45)
+  summary      String?        @db.Text
+  price        Decimal        @db.Decimal(13, 4)
+  stock_saldo  String         @default("0") @db.VarChar(45)
+  pages        Int
+  type         books_type
+  book_authors book_authors[]
+  orders       orders[]
+}
+
+model clients {
+  id         Int      @id @default(autoincrement())
+  username   String   @db.VarChar(45)
+  first_name String?  @db.VarChar(45)
+  last_name  String?  @db.VarChar(45)
+  email      String?  @db.VarChar(255)
+  password   String?  @db.VarChar(255)
+  address    String?  @db.VarChar(255)
+  orders     orders[]
+}
+
+model orders {
+  id               Int           @id @default(autoincrement())
+  delivery_address String        @db.VarChar(255)
+  order_date       DateTime      @db.DateTime(0)
+  status           orders_status
+  client_id        Int
+  book_id          Int
+  books            books         @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_yl21_Orders_yl21_Books1")
+  clients          clients       @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_yl21_Orders_yl21_Clients1")
+
+  @@index([book_id], map: "fk_yl21_Orders_yl21_Books1_idx")
+  @@index([client_id], map: "fk_yl21_Orders_yl21_Clients1_idx")
+}
+
+enum orders_status {
+  ordered
+  paid
+  sent
+}
+
+enum books_type {
+  new
+  used
+  ebook
+}
