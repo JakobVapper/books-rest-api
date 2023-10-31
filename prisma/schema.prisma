@@ -16,10 +16,10 @@ model authors {
 
 model book_authors {
   id        Int     @id @default(autoincrement())
-  book_id   Int
+  book_id   Int?
   author_id Int
   authors   authors @relation(fields: [author_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_yl21_Books_has_yl21_Authors_yl21_Authors1")
-  books     books   @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_yl21_Books_has_yl21_Authors_yl21_Books")
+  books     books?   @relation(fields: [book_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_yl21_Books_has_yl21_Authors_yl21_Books")
 
   @@index([author_id], map: "fk_yl21_Books_has_yl21_Authors_yl21_Authors1_idx")
   @@index([book_id], map: "fk_yl21_Books_has_yl21_Authors_yl21_Books_idx")
@@ -57,8 +57,8 @@ model orders {
   order_date       DateTime      @db.DateTime(0)
   status           orders_status
   client_id        Int
-  book_id          Int
-  books            books         @relation(fields: [book_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_yl21_Orders_yl21_Books1")
+  book_id          Int?
+  books            books?         @relation(fields: [book_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "fk_yl21_Orders_yl21_Books1")
   clients          clients       @relation(fields: [client_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_yl21_Orders_yl21_Clients1")
 
   @@index([book_id], map: "fk_yl21_Orders_yl21_Books1_idx")
