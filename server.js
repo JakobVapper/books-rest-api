@@ -5,6 +5,8 @@ const PORT = 3000;
 const app = express();
 const prisma = new PrismaClient();
 
+app.use(express.json());
+
 app.get('/books', async (req, res) => {
     const books = await prisma.books.findMany();
     res.status(200).json(books);
@@ -43,6 +45,37 @@ app.delete('/books/:id', async (req, res) => {
     }
 });
 
+app.post('/books', async (req, res) => {
+    try {
+        const newBook = await prisma.books.create({
+            data: { ...req.body },
+        });
+
+        res.status(200).json(newBook);
+
+    }catch (err) {
+        res.status(404).send({
+            message: "Midagi läks valesti",
+            error,
+        }
+    )}});    
+
+app.put ('/books', async (req, res) => {
+    try {
+        const newBook = await prisma.books.create({
+            data: { ...req.body },
+        });
+    
+        res.status(200).json(newBook);
+    
+    }catch (err) {
+        res.status(404).send({
+            message: "Midagi läks valesti",
+            error,
+        }
+    )}});       
+
+    
 app.listen(PORT, () => {
     console.log(`Server listening at port ${PORT}`);
 });
